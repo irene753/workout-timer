@@ -1,16 +1,12 @@
 
 <!DOCTYPE html>
 <html lang="zh-Hant">
-
 <head>
   <meta charset="UTF-8">
-
   <meta name="viewport"
         content="width=device-width, initial-scale=1, viewport-fit=cover">
-
   <meta name="theme-color" content="#101827">
 
-  <!-- iPhone 主畫面 App 設定 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style"
         content="black-translucent">
@@ -18,199 +14,102 @@
 
   <title>FIT TIMER - 運動計時器</title>
 
-  <!-- App 圖示與設定 -->
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
 
-  <!-- 原本的 CSS -->
-  <link rel="stylesheet" href="style.css?v=5">
-
-  <!-- PyScript -->
+  <link rel="stylesheet" href="style.css?v=11">
   <link rel="stylesheet"
         href="https://pyscript.net/releases/2026.7.3/core.css">
-
   <script type="module"
           src="https://pyscript.net/releases/2026.7.3/core.js">
   </script>
-
 </head>
 
 <body>
-
   <main class="app">
 
-    <!-- 頂部 -->
     <div class="top">
       <div class="logo">● FIT TIMER</div>
       <span id="status-pill">READY</span>
     </div>
 
     <h1>運動計時器</h1>
+    <p class="subtitle">專注每一秒，完成每一組</p>
 
-    <p class="subtitle">
-      專注每一秒，完成每一組
-    </p>
-
-    <!-- 計時器 -->
     <section class="timer-card">
-
       <div class="round" id="round-label">
         第 1 / 5 組
       </div>
 
       <div class="ring" id="ring">
-
         <div class="ring-inner">
-
-          <!-- 預設顯示預備階段 -->
-          <span id="phase-label">
-            預備時間
-          </span>
-
-          <div id="time-label">
-            00:10
-          </div>
-
-          <span id="hint">
-            按下開始，進入預備倒數
-          </span>
-
+          <span id="phase-label">預備時間</span>
+          <div id="time-label">00:10</div>
+          <span id="hint">按下開始，進入預備倒數</span>
         </div>
-
       </div>
 
-      <!-- 進度條 -->
       <div class="progress">
         <div id="progress-fill"></div>
       </div>
-
     </section>
 
-    <!-- 訓練設定 -->
     <section class="settings">
-
       <h2>訓練設定</h2>
 
-      <!-- 預備時間 -->
       <div class="setting">
-
         <span>預備時間</span>
-
         <div class="stepper">
-
-          <button id="prep-minus"
-                  aria-label="減少預備時間">
-            −
-          </button>
-
+          <button id="prep-minus">−</button>
           <strong id="prep-value">10 秒</strong>
-
-          <button id="prep-plus"
-                  aria-label="增加預備時間">
-            +
-          </button>
-
+          <button id="prep-plus">+</button>
         </div>
-
       </div>
 
-      <!-- 運動時間 -->
       <div class="setting">
-
         <span>運動時間</span>
-
         <div class="stepper">
-
-          <button id="work-minus"
-                  aria-label="減少運動時間">
-            −
-          </button>
-
+          <button id="work-minus">−</button>
           <strong id="work-value">40 秒</strong>
-
-          <button id="work-plus"
-                  aria-label="增加運動時間">
-            +
-          </button>
-
+          <button id="work-plus">+</button>
         </div>
-
       </div>
 
-      <!-- 休息時間 -->
       <div class="setting">
-
         <span>休息時間</span>
-
         <div class="stepper">
-
-          <button id="rest-minus"
-                  aria-label="減少休息時間">
-            −
-          </button>
-
+          <button id="rest-minus">−</button>
           <strong id="rest-value">20 秒</strong>
-
-          <button id="rest-plus"
-                  aria-label="增加休息時間">
-            +
-          </button>
-
+          <button id="rest-plus">+</button>
         </div>
-
       </div>
 
-      <!-- 訓練組數 -->
       <div class="setting">
-
         <span>訓練組數</span>
-
         <div class="stepper">
-
-          <button id="round-minus"
-                  aria-label="減少組數">
-            −
-          </button>
-
+          <button id="round-minus">−</button>
           <strong id="round-value">5 組</strong>
-
-          <button id="round-plus"
-                  aria-label="增加組數">
-            +
-          </button>
-
+          <button id="round-plus">+</button>
         </div>
-
       </div>
-
     </section>
 
-    <!-- 操作按鈕 -->
     <div class="actions">
-
-      <button id="start-btn"
-              class="primary"
-              disabled>
+      <button id="start-btn" class="primary" disabled>
         正在載入 Python…
       </button>
-
-      <button id="reset-btn"
-              class="secondary">
+      <button id="reset-btn" class="secondary">
         重設
       </button>
-
     </div>
 
-    <!-- 提醒 -->
     <p class="footnote">
-      開啟 iPhone 聲音並保持畫面開啟。
-      鎖定螢幕時，iOS 可能暫停語音或計時。
+      請開啟 iPhone 音量並保持畫面開啟。
+      鎖定螢幕時 iOS 可能限制語音播放。
     </p>
 
   </main>
 
-  <!-- 載入新版 Python -->
-  <script type="py" src="./main.py?v=9"></script>
-
+  <script type="py" src="./main.py?v=11"></script>
 </body>
 </html>
