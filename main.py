@@ -3,32 +3,21 @@ import math
 from pyscript import document, window, when
 from pyscript.ffi import create_proxy
 
-
-# =====================================
-# 預設設定
-# =====================================
-
+# ===== 預設設定 =====
 prep = 10
 work = 40
 rest = 20
 rounds = 5
 
-
-# =====================================
-# 計時器狀態
-# =====================================
-
+# ===== 計時狀態 =====
 round_no = 1
 phase = "prep"
 running = False
 started = False
-
 remaining = float(prep)
 deadline = None
 last_countdown = None
 
-
-# 保留語音物件，避免被提前回收
 current_utterance = None
 
 
@@ -36,33 +25,26 @@ def el(name):
     return document.getElementById(name)
 
 
-# =====================================
-# 英文語音
-# =====================================
-
+# ===== 英文語音 =====
 def speak(message):
     global current_utterance
 
     synth = window.speechSynthesis
-
     synth.cancel()
 
     utterance = window.SpeechSynthesisUtterance.new(message)
-
     utterance.lang = "en-US"
-    utterance.rate = 0.9
+    utterance.rate = 1.1
     utterance.pitch = 1.0
     utterance.volume = 1.0
 
     # 優先選擇英文聲音
-    voices = synth.getVoices()
-
-    for voice in voices:
-        if str(voice.lang).lower().startswith("en-US".lower()):
+    for voice in synth.getVoices():
+        if str(voice.lang).lower().startswith("en-us"):
             utterance.voice = voice
             break
     else:
-        for voice in voices:
+        for voice in synth.getVoices():
             if str(voice.lang).lower().startswith("en"):
                 utterance.voice = voice
                 break
@@ -70,10 +52,6 @@ def speak(message):
     current_utterance = utterance
     synth.speak(utterance)
 
-
-# =====================================
-# 取得不同階段的時間
-# =====================================
 
 def duration_of(p):
     return {
@@ -83,12 +61,8 @@ def duration_of(p):
     }.get(p, 1)
 
 
-# =====================================
-# 更新畫面
-# =====================================
-
+# ===== 更新畫面 =====
 def render():
-
     seconds = max(0, math.ceil(remaining))
 
     el("time-label").textContent = (
@@ -126,14 +100,11 @@ def render():
     color = colors[phase]
 
     if phase == "done":
-
         hint = "做得很好！"
         badge = "DONE"
         button = "再做一次"
         fraction = 1.0
-
     else:
-
         hints = {
             "prep": "準備開始運動！",
             "work": "持續加油！",
@@ -180,33 +151,21 @@ def render():
     )
 
     for name in ("prep", "work", "rest", "round"):
-
         el(f"{name}-minus").disabled = running
         el(f"{name}-plus").disabled = running
 
 
-# =====================================
-# 重設
-# =====================================
-
+# ===== 重設 =====
 def reset_state():
-
-    global round_no
-    global phase
-    global running
-    global started
-    global remaining
-    global deadline
-    global last_countdown
+    global round_no, phase, running, started
+    global remaining, deadline, last_countdown
 
     window.speechSynthesis.cancel()
 
     round_no = 1
     phase = "prep"
-
     running = False
     started = False
-
     remaining = float(prep)
     deadline = None
     last_countdown = None
@@ -214,35 +173,21 @@ def reset_state():
     render()
 
 
-# =====================================
-# 切換階段
-# =====================================
-
+# ===== 階段切換 =====
 def advance_phase():
-
-    global round_no
-    global phase
-    global running
-    global started
-    global remaining
-    global deadline
-    global last_countdown
+    global round_no, phase, running, started
+    global remaining, deadline, last_countdown
 
     if phase == "prep":
-
         phase = "work"
         length = work
-
-        speak("Go!")
+        message = "Go!"
 
     elif phase == "work":
-
         if round_no >= rounds:
-
             phase = "done"
             running = False
             started = False
-
             remaining = 0
             deadline = None
             last_countdown = None
@@ -252,41 +197,60 @@ def advance_phase():
 
         phase = "rest"
         length = rest
-
-        speak("Rest!")
+        message = "Rest!"
 
     elif phase == "rest":
-
         round_no += 1
         phase = "work"
         length = work
-
-        speak("Go!")
+        message = "Go!"
 
     else:
         return
 
     remaining = float(length)
+
+    # 延續原本的時間軸，減少計時漂移
     deadline += length * 1000
 
+    # 每進入新階段，重新啟用最後三秒倒數
     last_countdown = None
 
+    speak(message)
 
-# =====================================
-# 每 0.1 秒檢查時間
-# =====================================
 
-def tick():
-
-    global remaining
+# ===== 每個階段最後三秒倒數 =====
+def announce_countdown():
     global last_countdown
+
+    if phase not in ("prep", "work", "rest"):
+        return
+
+    secs = math.ceil(remaining)
+
+    if secs in (3, 2, 1):
+        if last_countdown != secs:
+            last_countdown = secs
+
+            messages = {
+                3: "Three",
+                2: "Two",
+                1: "One"
+            }
+
+            speak(messages[secs])
+
+
+# ===== 計時器 =====
+def tick():
+    global remaining
 
     if not running:
         return
 
     now = window.performance.now()
 
-    # 若階段時間已結束
+    # 先處理已結束的階段
     while (
         running
         and deadline is not None
@@ -295,55 +259,28 @@ def tick():
         advance_phase()
 
     if running:
-
         remaining = max(
             0,
             (deadline - now) / 1000
         )
 
-        secs = math.ceil(remaining)
-
-        # 預備最後三秒英文倒數
-        if phase == "prep":
-
-            if secs in (3, 2, 1):
-
-                if last_countdown != secs:
-
-                    last_countdown = secs
-
-                    countdown_voice = {
-                        3: "Three",
-                        2: "Two",
-                        1: "One"
-                    }
-
-                    speak(countdown_voice[secs])
+        # 所有階段都會倒數 3、2、1
+        announce_countdown()
 
     render()
 
 
-# =====================================
-# 開始 / 暫停 / 繼續
-# =====================================
-
+# ===== 開始 / 暫停 / 繼續 =====
 @when("click", "#start-btn")
 def toggle(event):
-
-    global phase
-    global running
-    global started
-    global remaining
-    global deadline
-    global last_countdown
+    global phase, running, started
+    global remaining, deadline, last_countdown
     global round_no
 
     if phase == "done":
         reset_state()
 
     if running:
-
-        # 暫停
         remaining = max(
             0,
             (deadline - window.performance.now()) / 1000
@@ -351,17 +288,12 @@ def toggle(event):
 
         running = False
         deadline = None
-
         window.speechSynthesis.cancel()
 
     else:
-
         if not started:
-
-            # 每次新訓練先進入預備階段
             round_no = 1
             phase = "prep"
-
             remaining = float(prep)
             last_countdown = None
 
@@ -377,76 +309,42 @@ def toggle(event):
     render()
 
 
-# =====================================
-# 重設按鈕
-# =====================================
-
+# ===== 重設按鈕 =====
 @when("click", "#reset-btn")
 def reset(event):
     reset_state()
 
 
-# =====================================
-# 調整預備 / 運動 / 休息 / 組數
-# =====================================
-
+# ===== 調整設定 =====
 @when("click", ".stepper button")
 def change(event):
-
-    global prep
-    global work
-    global rest
-    global rounds
+    global prep, work, rest, rounds
 
     if running:
         return
 
     name = str(event.currentTarget.id)
-
     step = 1 if name.endswith("plus") else -1
 
     if name.startswith("prep"):
-
-        prep = max(
-            5,
-            min(120, prep + step * 5)
-        )
+        prep = max(5, min(120, prep + step * 5))
 
     elif name.startswith("work"):
-
-        work = max(
-            5,
-            min(3600, work + step * 5)
-        )
+        work = max(5, min(3600, work + step * 5))
 
     elif name.startswith("rest"):
-
-        rest = max(
-            5,
-            min(3600, rest + step * 5)
-        )
+        rest = max(5, min(3600, rest + step * 5))
 
     elif name.startswith("round"):
-
-        rounds = max(
-            1,
-            min(100, rounds + step)
-        )
+        rounds = max(1, min(100, rounds + step))
 
     reset_state()
 
 
-# =====================================
-# 初始化
-# =====================================
-
+# ===== 初始化 =====
 reset_state()
 
 el("start-btn").disabled = False
 
 tick_proxy = create_proxy(tick)
-
-interval_id = window.setInterval(
-    tick_proxy,
-    100
-)
+interval_id = window.setInterval(tick_proxy, 100)
