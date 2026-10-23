@@ -24,13 +24,24 @@ def el(name):
 
 
 def speak(message):
-    """中文語音提示"""
     synth = window.speechSynthesis
     synth.cancel()
 
-    voice = window.SpeechSynthesisUtterance.new(message)
-    voice.lang = "zh-TW"
-    voice.rate = 1.0
+    translations = {
+        "預備！": "Ready!",
+        "三": "Three",
+        "二": "Two",
+        "一": "One",
+        "開始！": "Work!",
+        "休息！": "Rest!",
+        "運動完成！": "Workout complete!"
+    }
+
+    english = translations.get(message, message)
+
+    voice = window.SpeechSynthesisUtterance.new(english)
+    voice.lang = "en-US"
+    voice.rate = 0.9
     voice.volume = 1.0
 
     synth.speak(voice)
