@@ -38,13 +38,15 @@ def speak(message):
     utterance.pitch = 1.0
     utterance.volume = 1.0
 
-    # 優先選擇英文聲音
-    for voice in synth.getVoices():
-        if str(voice.lang).lower().startswith("en-us"):
+    voices = synth.getVoices()
+
+    # 優先選擇美式英文
+    for voice in voices:
+        if str(voice.lang).lower() == "en-us":
             utterance.voice = voice
             break
     else:
-        for voice in synth.getVoices():
+        for voice in voices:
             if str(voice.lang).lower().startswith("en"):
                 utterance.voice = voice
                 break
@@ -92,18 +94,24 @@ def render():
 
     colors = {
         "prep": "#82b4ff",
-        "work": "#2bd3b3",
+        "work": "#008f7a",
         "rest": "#ffc06a",
         "done": "#2bd3b3"
     }
 
     color = colors[phase]
 
+    # ===== 運動階段切換白色背景 =====
+    document.body.classList.toggle(
+        "work-mode", phase == "work"
+    )
+
     if phase == "done":
         hint = "做得很好！"
         badge = "DONE"
         button = "再做一次"
         fraction = 1.0
+
     else:
         hints = {
             "prep": "準備開始運動！",
@@ -173,7 +181,7 @@ def reset_state():
     render()
 
 
-# ===== 階段切換 =====
+# ===== 切換階段 =====
 def advance_phase():
     global round_no, phase, running, started
     global remaining, deadline, last_countdown
@@ -210,10 +218,8 @@ def advance_phase():
 
     remaining = float(length)
 
-    # 延續原本的時間軸，減少計時漂移
+    # 延續時間軸，避免累積誤差
     deadline += length * 1000
-
-    # 每進入新階段，重新啟用最後三秒倒數
     last_countdown = None
 
     speak(message)
@@ -250,7 +256,6 @@ def tick():
 
     now = window.performance.now()
 
-    # 先處理已結束的階段
     while (
         running
         and deadline is not None
@@ -264,7 +269,6 @@ def tick():
             (deadline - now) / 1000
         )
 
-        # 所有階段都會倒數 3、2、1
         announce_countdown()
 
     render()
