@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101827">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FIT TIMER">
+  <title>FIT TIMER - 運動計時器</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://pyscript.net/releases/2026.7.3/core.css">
+  <script type="module" src="https://pyscript.net/releases/2026.7.3/core.js"></script>
+</head>
+<body>
+  <main class="app">
+    <div class="top"><div class="logo">● FIT TIMER</div><span id="status-pill">READY</span></div>
+    <h1>運動計時器</h1>
+    <p class="subtitle">專注每一秒，完成每一組</p>
+    <section class="timer-card">
+      <div class="round" id="round-label">第 1 / 5 組</div>
+      <div class="ring" id="ring"><div class="ring-inner"><span id="phase-label">準備開始</span><div id="time-label">00:40</div><span id="hint">設定時間後按下開始</span></div></div>
+      <div class="progress"><div id="progress-fill"></div></div>
+    </section>
+    <section class="settings">
+      <h2>訓練設定</h2>
+      <div class="setting"><span>運動時間</span><div class="stepper"><button id="work-minus" aria-label="減少運動時間">−</button><strong id="work-value">40 秒</strong><button id="work-plus" aria-label="增加運動時間">+</button></div></div>
+      <div class="setting"><span>休息時間</span><div class="stepper"><button id="rest-minus" aria-label="減少休息時間">−</button><strong id="rest-value">20 秒</strong><button id="rest-plus" aria-label="增加休息時間">+</button></div></div>
+      <div class="setting"><span>訓練組數</span><div class="stepper"><button id="round-minus" aria-label="減少組數">−</button><strong id="round-value">5 組</strong><button id="round-plus" aria-label="增加組數">+</button></div></div>
+    </section>
+    <div class="actions"><button id="start-btn" class="primary" disabled>正在載入 Python…</button><button id="reset-btn" class="secondary">重設</button></div>
+    <p class="footnote">請保持畫面開啟；鎖定螢幕時 iOS 可能暫停計時更新。</p>
+  </main>
+  <script type="py" src="./main.py"></script>
+</body>
+</html>
