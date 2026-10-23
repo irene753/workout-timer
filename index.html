@@ -26,12 +26,13 @@
     </section>
     <section class="settings">
       <h2>訓練設定</h2>
+      <div class="setting"><span>預備時間</span><div class="stepper"><button id="prep-minus" aria-label="減少預備時間">−</button><strong id="prep-value">10 秒</strong><button id="prep-plus" aria-label="增加預備時間">+</button></div></div>
       <div class="setting"><span>運動時間</span><div class="stepper"><button id="work-minus" aria-label="減少運動時間">−</button><strong id="work-value">40 秒</strong><button id="work-plus" aria-label="增加運動時間">+</button></div></div>
       <div class="setting"><span>休息時間</span><div class="stepper"><button id="rest-minus" aria-label="減少休息時間">−</button><strong id="rest-value">20 秒</strong><button id="rest-plus" aria-label="增加休息時間">+</button></div></div>
       <div class="setting"><span>訓練組數</span><div class="stepper"><button id="round-minus" aria-label="減少組數">−</button><strong id="round-value">5 組</strong><button id="round-plus" aria-label="增加組數">+</button></div></div>
     </section>
     <div class="actions"><button id="start-btn" class="primary" disabled>正在載入 Python…</button><button id="reset-btn" class="secondary">重設</button></div>
-    <p class="footnote">請保持畫面開啟；鎖定螢幕時 iOS 可能暫停計時更新。</p>
+    <p class="footnote">開啟 iPhone 聲音並保持畫面開啟；鎖定螢幕時 iOS 可能暫停語音或計時。</p>
   </main>
   <script type="py" src="./main.py"></script>
 </body>
